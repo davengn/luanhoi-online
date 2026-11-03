@@ -1,0 +1,55 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Player {
+  id                    String             @id @default(uuid())
+  username              String
+  appearance            Json
+  merit                 Int                @default(0)
+  negativeKarma         Int                @default(0)
+  karmaBalance          Int                @default(0)
+  exp                   Int                @default(0)
+  level                 Int                @default(1)
+  rankStage             Int                @default(1)
+  senCurrency           Int                @default(50)
+  tienNgoc              Int                @default(0)
+  currentRealm          String             @default("human")
+  currentRoomId         String             @default("main_temple_1")
+  hellSentenceLevel     Int                @default(0)
+  completedHellLevels   Int[]
+  completedTribulations String[]
+  unlockedRealms        String[]
+  unlockedOutfits       String[]
+  unlockedAuras         String[]
+  unlockedTitles        String[]
+  completedWisdomIds    String[]
+  achievements          String[]
+  quests                Json
+  actionCooldowns       Json
+  dailyActionCounts     Json
+  position              Json
+  rotationY             Float              @default(0)
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  karmaTransactions     KarmaTransaction[]
+}
+
+model KarmaTransaction {
+  id            String   @id @default(uuid())
+  playerId      String
+  player        Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  timestamp     BigInt
+  type          String
+  amount        Int
+  reason        String
+  sourceId      String
+  netKarmaAfter Int
+
+  @@index([playerId, timestamp(sort: Desc)])
+}
